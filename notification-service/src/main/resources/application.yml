@@ -1,0 +1,45 @@
+server:
+  port: 8083
+
+spring:
+  application:
+    name: notification-service
+  cloud:
+    function:
+      definition: downstreamNewNotification; downstreamUserContactRequest; upstreamUserContact
+    stream:
+      bindings:
+        downstreamNewNotification-in-0:
+          destination: downstream.new-notification
+          binder: kafka
+        downstreamUserContactRequest-out-0:
+          destination: downstream.user-contact
+          binder: kafka
+        upstreamUserContact-in-0:
+          destination: upstream.user-contact
+          binder: kafka
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: dogofbravery42@gmail.com
+    password: qlmfeaqizlddpgzd
+  kafka:
+    bootstrap-servers: localhost:9092
+
+
+endpoints:
+  shutdown:
+    enabled: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  info:
+    env:
+      enabled: true
+  metrics:
+    tags:
+      application: ${spring.application.name}

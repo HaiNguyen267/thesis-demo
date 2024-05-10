@@ -1,0 +1,36 @@
+server:
+  port: 8086
+spring:
+  application:
+    name: shipping-service
+  cloud:
+    function:
+      definition: processingShippingFunction; downstreamShippingOutput
+    stream:
+      bindings:
+        processingShippingFunction-in-0:
+          destination: downstream.shipping
+          binder: kafka
+        processingShippingFunction-out-0:
+          destination: upstream.shipping
+          binder: kafka
+        downstreamShippingOutput-out-0:
+          destination: upstream.shipping
+          binder: kafka
+  kafka:
+    bootstrap-servers: localhost:9092
+endpoints:
+  shutdown:
+    enabled: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  info:
+    env:
+      enabled: true
+  metrics:
+    tags:
+      application: ${spring.application.name}

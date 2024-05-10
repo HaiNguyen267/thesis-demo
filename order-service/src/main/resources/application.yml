@@ -1,0 +1,76 @@
+server:
+  port: 8084
+
+spring:
+  application:
+    name: order-service
+  r2dbc:
+    url: r2dbc:mysql://localhost:3306/thesis_order_service
+    username: root
+    password: 5599
+  flyway:
+    url: jdbc:mysql://localhost:3306/thesis_order_service
+    user: root
+    password: 5599
+  cloud:
+    function:
+      definition: downstreamCheckInventoryOutput; upstreamCheckInventory; downstreamVerifyPaymentOutput; upstreamPaymentVerification; downstreamShippingOutput; upstreamShipping; downstreamNewNotificationOutput; downstreamProductPurchased; downstreamProductReturned
+    stream:
+      bindings:
+        downstreamCheckInventoryOutput-out-0:
+          destination: downstream.check-inventory
+          binder: kafka
+        upstreamCheckInventory-in-0:
+          destination: upstream.check-inventory
+          binder: kafka
+        downstreamVerifyPaymentOutput-out-0:
+          destination: downstream.verify-payment
+          binder: kafka
+        upstreamPaymentVerification-in-0:
+          destination: upstream.verify-payment
+          binder: kafka
+        downstreamShippingOutput-out-0:
+          destination: downstream.shipping
+          binder: kafka
+        upstreamShipping-in-0:
+          destination: upstream.shipping
+          binder: kafka
+        downstreamNewNotificationOutput-out-0:
+          destination: downstream.new-notification
+          binder: kafka
+#        downstreamNotifyShippingStatusChangedOutput-out-0:
+#          destination: downstream.new-notification
+#          binder: kafka
+        downstreamProductPurchased-out-0:
+          destination: downstream.product-purchased
+          binder: kafka
+        downstreamProductReturned-out-0:
+          destination: downstream.product-returned
+          binder: kafka
+
+endpoints:
+  shutdown:
+    enabled: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  info:
+    env:
+      enabled: true
+  metrics:
+    tags:
+      application: ${spring.application.name}
+#cloud:
+#  function:
+#    definition: >
+#      downstreamCheckInventoryOutput;
+#      upstreamCheckInventory;
+#      downstreamVerifyPaymentOutput;
+#      upstreamPaymentVerification;
+#      downstreamShippingOutput;
+#      upstreamShipping;
+#      downstreamNotifyOrderOnHoldOutput;
+#      downstreamNotifyShippingStatusChangedOutput

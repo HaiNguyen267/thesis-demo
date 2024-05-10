@@ -1,0 +1,43 @@
+server:
+  port: 8085
+spring:
+  application:
+    name: customer-service
+  r2dbc:
+    url: r2dbc:mysql://localhost:3306/thesis_payment_service
+    username: root
+    password: 5599
+  flyway:
+    url: jdbc:mysql://localhost:3306/thesis_payment_service
+    user: root
+    password: 5599
+  cloud:
+    function:
+      definition: upstreamVerifyPayment
+    stream:
+      bindings:
+        upstreamVerifyPayment-in-0:
+          destination: downstream.verify-payment
+          binder: kafka
+        upstreamVerifyPayment-out-0:
+          destination: upstream.verify-payment
+          binder: kafka
+  kafka:
+    bootstrap-servers: localhost:9092
+
+
+endpoints:
+  shutdown:
+    enabled: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  info:
+    env:
+      enabled: true
+  metrics:
+    tags:
+      application: ${spring.application.name}
